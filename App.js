@@ -1,5 +1,6 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import React, { useState } from 'react';
+import {StyleSheet, Text, View, TextInput, Button} from 'react-native';
+import {enter} from "react-native/Libraries/Utilities/ReactNativeTestTools";
 
 // We should always place text inside the <Text> tag. Unlike Web Dev, we cannot put text anywhere we want
 // Its common to have a lot of <View> component in your app
@@ -19,19 +20,43 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
  */
 
 export default function App() {
-  return (
-    <View style={styles.screen}>
-      <View style={styles.inputContainer}>
-        <TextInput
-            placeholder={"Enter Course Goal"}
-            style={styles.inputField}/>
-        <Button title={"ADD"} />
-      </View>
-      <View>
+    const [enteredGoal, setEnteredGoal] = useState('');  // This state will store the goal being entered
+    const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
 
-      </View>
-    </View>
-  );
+    const handleInputText = (enteredText) => {
+        setEnteredGoal(enteredText);
+    }
+
+    const handleButtonPress = () => {
+        console.log(enteredGoal);
+        setGoals((currentGoals) => [...currentGoals, enteredGoal]);
+        /*
+            Although, according to our code, allGoals will always contain the latest list of all our code, but the
+            way react works, it is not 100% guaranteed that this will be the case.
+            Hence we use the above method of passing the function to the updateState() function.
+            This will ensure that allGoals always contain the latest list of all the goals.
+         */
+    }
+
+    return (
+        <View style={styles.screen}>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    placeholder={"Enter Course Goal"}
+                    style={styles.inputField}
+                    onChangeText={handleInputText}
+                    value={enteredGoal}
+                />
+                <Button
+                    title={"ADD"}
+                    onPress={handleButtonPress}
+                />
+            </View>
+            <View>
+
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -41,10 +66,12 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'},
+        alignItems: 'center'
+    },
     inputField: {
         borderColor: "black",
         borderWidth: 1,
         width: '80%',
-        padding: 10},
+        padding: 10
+    },
 });
