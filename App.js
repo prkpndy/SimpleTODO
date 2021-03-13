@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {StyleSheet, Text, View, TextInput, Button} from 'react-native';
-import {enter} from "react-native/Libraries/Utilities/ReactNativeTestTools";
 
 // We should always place text inside the <Text> tag. Unlike Web Dev, we cannot put text anywhere we want
 // Its common to have a lot of <View> component in your app
@@ -19,6 +18,10 @@ import {enter} from "react-native/Libraries/Utilities/ReactNativeTestTools";
         React Native Developers might add some optimization in this method in the future
  */
 
+// We should always add key property to each component when making a list of components (with the same tag) inside a single parent
+// This helps react in optimizing our code
+// All the keys should be unique, otherwise we will get a warning when we add two elements with the same key
+
 export default function App() {
     const [enteredGoal, setEnteredGoal] = useState('');  // This state will store the goal being entered
     const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
@@ -30,6 +33,7 @@ export default function App() {
     const handleButtonPress = () => {
         console.log(enteredGoal);
         setGoals((currentGoals) => [...currentGoals, enteredGoal]);
+        setEnteredGoal('');
         /*
             Although, according to our code, allGoals will always contain the latest list of all our code, but the
             way react works, it is not 100% guaranteed that this will be the case.
@@ -53,7 +57,7 @@ export default function App() {
                 />
             </View>
             <View>
-
+                {allGoals.map((goal) => <Text key={goal}>{goal}</Text>)}
             </View>
         </View>
     );
