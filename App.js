@@ -52,8 +52,8 @@ const generateKey = (pre) => {
 export default function App() {
     const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
 
-    const handleButtonPress = (enteredGoal) => {
-        setGoals((currentGoals) => [
+    const handleButtonPress = enteredGoal => {
+        setGoals(currentGoals => [
             ...currentGoals,
             {uniqueID: generateKey(enteredGoal), value: enteredGoal}]);
         /*
@@ -64,6 +64,10 @@ export default function App() {
          */
     }
 
+    const handleItemPress = itemID => {
+        setGoals(currentGoals => currentGoals.filter(goal => goal.uniqueID !== itemID));
+    }
+
     return (
         <View style={styles.screen}>
             <GoalInput onAddGoal={handleButtonPress} />
@@ -71,7 +75,10 @@ export default function App() {
                 keyExtractor={(item, index) => item.uniqueID}
                 data={allGoals}
                 renderItem={itemData => (
-                    <GoalListItem itemValue={itemData.item.value} />
+                    <GoalListItem
+                        itemValue={itemData.item.value}
+                        onDelete={() => handleItemPress(itemData.item.uniqueID)}
+                    />
                 )}
             />
         </View>
