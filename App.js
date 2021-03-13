@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {StyleSheet, Text, View, TextInput, Button, FlatList} from 'react-native';
+import GoalListItem from './components/GoalListItem';
+import GoalInput from './components/GoalInput';
 
 // We should always place text inside the <Text> tag. Unlike Web Dev, we cannot put text anywhere we want
 // Its common to have a lot of <View> component in your app
@@ -48,17 +50,12 @@ const generateKey = (pre) => {
 }
 
 export default function App() {
-    const [enteredGoal, setEnteredGoal] = useState('');  // This state will store the goal being entered
     const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
 
-    const handleInputText = (enteredText) => {
-        setEnteredGoal(enteredText);
-    }
-
-    const handleButtonPress = () => {
-        console.log(enteredGoal);
-        setGoals((currentGoals) => [...currentGoals, {uniqueID: generateKey(enteredGoal), value: enteredGoal}]);
-        setEnteredGoal('');
+    const handleButtonPress = (enteredGoal) => {
+        setGoals((currentGoals) => [
+            ...currentGoals,
+            {uniqueID: generateKey(enteredGoal), value: enteredGoal}]);
         /*
             Although, according to our code, allGoals will always contain the latest list of all our code, but the
             way react works, it is not 100% guaranteed that this will be the case.
@@ -69,25 +66,12 @@ export default function App() {
 
     return (
         <View style={styles.screen}>
-            <View style={styles.inputContainer}>
-                <TextInput
-                    placeholder={"Enter Course Goal"}
-                    style={styles.inputField}
-                    onChangeText={handleInputText}
-                    value={enteredGoal}
-                />
-                <Button
-                    title={"ADD"}
-                    onPress={handleButtonPress}
-                />
-            </View>
+            <GoalInput onAddGoal={handleButtonPress} />
             <FlatList
                 keyExtractor={(item, index) => item.uniqueID}
                 data={allGoals}
                 renderItem={itemData => (
-                    <View style={styles.listItem}>
-                        <Text>{itemData.item.value}</Text>
-                    </View>
+                    <GoalListItem itemValue={itemData.item.value} />
                 )}
             />
         </View>
@@ -98,22 +82,4 @@ const styles = StyleSheet.create({
     screen: {
         padding: 50
     },
-    inputContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    inputField: {
-        borderColor: "black",
-        borderWidth: 1,
-        width: '80%',
-        padding: 10
-    },
-    listItem: {
-        padding: 10,
-        marginVertical: 20,
-        backgroundColor: 'pink',
-        borderColor: 'black',
-        borderWidth: 1
-    }
 });
