@@ -11,13 +11,20 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 // justifyContent: controls the layout of the items along the main-axis
 // alignItems: controls the layout of the items along the cross-axis
 
+/*
+    We should not use inline styling when the style object is very large. Instead, we should define our styles separately using Stylesheet.create() method
+    This provides the following benefits:
+        It checks for errors in property name and values and if their are any, throws an error to let you know
+        React Native Developers might add some optimization in this method in the future
+ */
+
 export default function App() {
   return (
-    <View style={{padding: 50}}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+    <View style={styles.screen}>
+      <View style={styles.inputContainer}>
         <TextInput
             placeholder={"Enter Course Goal"}
-            style={{borderColor: "black", borderWidth: 1, width: '80%', padding: 10}}/>
+            style={styles.inputField}/>
         <Button title={"ADD"} />
       </View>
       <View>
@@ -28,10 +35,16 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    screen: {
+        padding: 50
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'},
+    inputField: {
+        borderColor: "black",
+        borderWidth: 1,
+        width: '80%',
+        padding: 10},
 });
