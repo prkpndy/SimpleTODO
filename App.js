@@ -51,8 +51,12 @@ const generateKey = (pre) => {
 
 export default function App() {
     const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
+    const [isModalVisible, setIsModalVisible] = useState(false);  // This state will control the visibility of Modal
 
     const handleButtonPress = enteredGoal => {
+        if(enteredGoal === '') return;  // This will ensure that empty string is not added to the list
+
+        setIsModalVisible(false);
         setGoals(currentGoals => [
             ...currentGoals,
             {uniqueID: generateKey(enteredGoal), value: enteredGoal}]);
@@ -70,7 +74,12 @@ export default function App() {
 
     return (
         <View style={styles.screen}>
-            <GoalInput onAddGoal={handleButtonPress} />
+            <Button title={'ADD NEW GOAL'} onPress={() => setIsModalVisible(true)}/>
+            <GoalInput
+                onAddGoal={handleButtonPress}
+                isModalVisible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+            />
             <FlatList
                 keyExtractor={(item, index) => item.uniqueID}
                 data={allGoals}
