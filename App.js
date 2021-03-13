@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, View, TextInput, Button} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Button, FlatList} from 'react-native';
 
 // We should always place text inside the <Text> tag. Unlike Web Dev, we cannot put text anywhere we want
 // Its common to have a lot of <View> component in your app
@@ -22,6 +22,31 @@ import {StyleSheet, Text, View, TextInput, Button} from 'react-native';
 // This helps react in optimizing our code
 // All the keys should be unique, otherwise we will get a warning when we add two elements with the same key
 
+// We cannot scroll a view by default
+// If we want to scroll a view, we should use ScrollView component
+
+/*
+    But ScrollView component renders the whole list at once (i.e. if we have a list containing thousands of elements,
+    than it will render the whole list at once, which we do not want as it will severely hamper the performance). Hence,
+    to overcome this shortcoming of ScrollView, we use FlatList component, which will not render the whole list at once,
+    but will render only the items which are visible on the screen at the moment. If you have a list of components
+    in which the length of the list is known to be small (50-100), then you can use ScrollView for a better user experience.
+
+    FlatList uses item list which is a list of objects, each object containing a 'key' property and the value of the list (can be named anything).
+    The 'key' property is used to assign a unique key to the list (which is important for performance as explained above).
+    Hence 'key' property should be unique.
+    If we do not wish to name the 'key' property as 'key', then we have to define the keyExtractor property of FlatList
+    component which will define how to extract key from our object (item)
+    Note that the renderItem property in the FlatList component needs to be assigned a function which will receive an
+    object (containing index, value etc.) and should return the item value which we need to display in the list
+ */
+
+
+// Function to generate unique key
+const generateKey = (pre) => {
+    return `${ pre }_${ new Date().getTime() }`;
+}
+
 export default function App() {
     const [enteredGoal, setEnteredGoal] = useState('');  // This state will store the goal being entered
     const [allGoals, setGoals] = useState([]);  // This state will store all the goals of the user
@@ -32,7 +57,7 @@ export default function App() {
 
     const handleButtonPress = () => {
         console.log(enteredGoal);
-        setGoals((currentGoals) => [...currentGoals, enteredGoal]);
+        setGoals((currentGoals) => [...currentGoals, {uniqueID: generateKey(enteredGoal), value: enteredGoal}]);
         setEnteredGoal('');
         /*
             Although, according to our code, allGoals will always contain the latest list of all our code, but the
@@ -56,9 +81,15 @@ export default function App() {
                     onPress={handleButtonPress}
                 />
             </View>
-            <View>
-                {allGoals.map((goal) => <Text key={goal}>{goal}</Text>)}
-            </View>
+            <FlatList
+                keyExtractor={(item, index) => item.uniqueID}
+                data={allGoals}
+                renderItem={itemData => (
+                    <View style={styles.listItem}>
+                        <Text>{itemData.item.value}</Text>
+                    </View>
+                )}
+            />
         </View>
     );
 }
@@ -78,4 +109,11 @@ const styles = StyleSheet.create({
         width: '80%',
         padding: 10
     },
+    listItem: {
+        padding: 10,
+        marginVertical: 20,
+        backgroundColor: 'pink',
+        borderColor: 'black',
+        borderWidth: 1
+    }
 });
